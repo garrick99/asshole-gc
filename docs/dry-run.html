@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dry-Run Mode — asshole-gc</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="docs.css">
+  <link rel="stylesheet" href="feature.css">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+</head>
+<body>
+  <header>
+    <nav>
+      <div class="logo"><a href="index.html" style="color:inherit;text-decoration:none"><span class="logo-cmd">asshole-gc</span></a><span class="logo-version">v1.0.0</span></div>
+      <div class="nav-links">
+        <a href="docs.html">Docs</a>
+        <a href="algorithm.html">Algorithm</a>
+        <a href="https://github.com/garrick99/asshole-gc" target="_blank">GitHub</a>
+        <a href="app.html" class="btn-nav">Run Scan</a>
+      </div>
+    </nav>
+  </header>
+
+  <div class="feature-page">
+    <div class="feature-hero">
+      <div class="feature-icon-lg">🧪</div>
+      <h1>Dry-Run Mode</h1>
+      <p class="feature-lead">Always review before you commit. <code>--dry-run</code> shows you the candidate list with evidence. No surprises. No regrets.</p>
+    </div>
+
+    <div class="feature-body">
+
+      <h2>Measure Twice</h2>
+      <p>Every serious engineering tool with destructive potential has a dry-run mode. <code>terraform plan</code>. <code>rsync --dry-run</code>. <code>git stash</code> before a rebase. The pattern exists because irreversible actions deserve a preview.</p>
+      <p>Removing someone from your life — or adjusting how much of it they have access to — is irreversible in ways that file deletions usually aren't. Dry-run isn't optional caution. It's mandatory respect for the weight of the decision.</p>
+
+      <h2>What Dry-Run Shows</h2>
+      <p>Running a scan surfaces every tracked subject, sorted by priority, with the evidence behind their score:</p>
+
+      <div class="terminal">
+        <div class="terminal-bar">
+          <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+          <span class="terminal-title">asshole-gc --dry-run</span>
+        </div>
+        <div class="terminal-body">
+          <div class="term-line"><span class="prompt">$</span> asshole-gc --dry-run</div>
+          <div class="term-line out">Scanning environment... done.</div>
+          <div class="term-line out">&nbsp;</div>
+          <div class="term-line out">  Candidates flagged: <span class="yellow">2</span></div>
+          <div class="term-line out">&nbsp;</div>
+          <div class="term-line out">  <span class="red">●</span> Dave (Engineering) &nbsp;<span class="dim">— 7 days, confidence 94% — FLAG HIGH</span></div>
+          <div class="term-line out">  &nbsp;&nbsp;<span class="dim">Top signals: DARVO (91%), Condescension (88%), Pattern Persistence (95%)</span></div>
+          <div class="term-line out">&nbsp;</div>
+          <div class="term-line out">  <span class="yellow">●</span> Karen (Slack) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="dim">— 3 days, confidence 71% — FLAG</span></div>
+          <div class="term-line out">  &nbsp;&nbsp;<span class="dim">Top signals: Chronic Negativity (74%), Escalation (68%)</span></div>
+          <div class="term-line out">&nbsp;</div>
+          <div class="term-line out dim">  Run with --run to execute. Use --grace-period to warn first.</div>
+        </div>
+      </div>
+
+      <h2>How to Read the Results</h2>
+      <p>For each flagged subject you'll see:</p>
+      <ul class="feature-list">
+        <li><strong>Consecutive bad days</strong> — the streak that triggered the flag. This resets on genuine good behavior.</li>
+        <li><strong>Confidence percentage</strong> — how certain the system is that the pattern is real vs. situational.</li>
+        <li><strong>Priority level</strong> — MONITOR, REVIEW, FLAG, or FLAG HIGH. Only FLAG and above are candidates for action.</li>
+        <li><strong>Top signals</strong> — the three highest-scoring dimensions driving their result. This tells you what kind of problem you're dealing with.</li>
+      </ul>
+
+      <h2>The Review Step</h2>
+      <p>Dry-run output isn't a verdict. It's a briefing. Before you act, ask yourself:</p>
+      <ul class="feature-list">
+        <li>Does this match what I actually experience? Or does it feel off?</li>
+        <li>Is there context the system doesn't have — something I know but didn't log?</li>
+        <li>Am I the only data source? Should I get a second perspective?</li>
+        <li>Is the top signal actually the right one, or am I pattern-matching on the wrong thing?</li>
+        <li>Have I tried talking to them directly about this?</li>
+      </ul>
+      <p>If everything checks out and the answer to all of those is "yes, this is accurate" — then you have your answer.</p>
+
+      <h2>False Positives Without the Review</h2>
+      <p>The estimated false positive rate with dry-run review is under 2%. Without it — without pausing to actually read the results and apply human judgment — that rate climbs to roughly 8%. One in twelve. That's not a risk worth skipping the review to avoid.</p>
+      <p>The most common false positive cause is context the system doesn't have: a subject going through something significant that you know about but didn't flag. The review step is where you apply that knowledge.</p>
+
+      <h2>What Dry-Run Doesn't Do</h2>
+      <p>Dry-run doesn't contact anyone. It doesn't save to any server. It doesn't create any record outside your own browser. It's a read-only operation — a look at the state of your data and what the algorithm concludes from it. You are the only one who sees it.</p>
+
+      <div class="feature-nav">
+        <a href="confidence.html" class="btn-secondary">← Confidence Scoring</a>
+        <a href="grace-period.html" class="btn-primary">Next: Grace Period →</a>
+      </div>
+
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-logo">asshole-gc</div>
+      <div class="footer-links">
+        <a href="docs.html">Docs</a>
+        <a href="algorithm.html">Algorithm</a>
+        <a href="https://github.com/garrick99/asshole-gc">GitHub</a>
+      </div>
+      <div class="footer-copy">MIT License. Use responsibly.</div>
+    </div>
+  </footer>
+</body>
+</html>

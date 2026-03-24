@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Configurable Thresholds — asshole-gc</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="docs.css">
+  <link rel="stylesheet" href="feature.css">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+</head>
+<body>
+  <header>
+    <nav>
+      <div class="logo"><a href="index.html" style="color:inherit;text-decoration:none"><span class="logo-cmd">asshole-gc</span></a><span class="logo-version">v1.0.0</span></div>
+      <div class="nav-links">
+        <a href="docs.html">Docs</a>
+        <a href="algorithm.html">Algorithm</a>
+        <a href="https://github.com/garrick99/asshole-gc" target="_blank">GitHub</a>
+        <a href="app.html" class="btn-nav">Run Scan</a>
+      </div>
+    </nav>
+  </header>
+
+  <div class="feature-page">
+    <div class="feature-hero">
+      <div class="feature-icon-lg">⚙️</div>
+      <h1>Configurable Thresholds</h1>
+      <p class="feature-lead">3 consecutive bad days is the default. Working in finance? Bump it to 5. Running a startup? 2 might be generous enough.</p>
+    </div>
+
+    <div class="feature-body">
+
+      <h2>Why Three</h2>
+      <p>The default threshold of three consecutive bad days wasn't chosen arbitrarily. It reflects a specific philosophy about what constitutes a pattern versus noise:</p>
+
+      <div class="three-blocks">
+        <div class="three-block">
+          <div class="three-num">1</div>
+          <div class="three-label">Noise</div>
+          <p>One bad day is noise. Everyone has them. External pressure, poor sleep, a bad phone call before they walked in the door. A single incident says almost nothing about a person.</p>
+        </div>
+        <div class="three-block">
+          <div class="three-num">2</div>
+          <div class="three-label">Pattern Forming</div>
+          <p>Two consecutive bad days is worth noting. Something is going on. But it's still not enough to act on — it could still be circumstantial, and one good day sits between you and a clean bill of health.</p>
+        </div>
+        <div class="three-block">
+          <div class="three-num">3</div>
+          <div class="three-label">Lifestyle</div>
+          <p>Three in a row is a choice. At this point, the behavior is no longer being overridden by their better nature on a given day. It's what you're getting. The question is whether it's acceptable.</p>
+        </div>
+      </div>
+
+      <h2>Adjusting for Context</h2>
+      <p>The right threshold depends heavily on the relationship, the environment, and what the stakes are.</p>
+
+      <div class="threshold-table">
+        <div class="thresh-row header">
+          <span>Environment</span>
+          <span>Recommended</span>
+          <span>Reasoning</span>
+        </div>
+        <div class="thresh-row">
+          <span>Personal friendships</span>
+          <span class="thresh-val">3 (default)</span>
+          <span>Balanced. Enough grace, enough signal.</span>
+        </div>
+        <div class="thresh-row">
+          <span>Romantic relationships</span>
+          <span class="thresh-val">2–3</span>
+          <span>Intimacy amplifies patterns. Bad days hit harder and more often.</span>
+        </div>
+        <div class="thresh-row">
+          <span>Professional — peer</span>
+          <span class="thresh-val">3–4</span>
+          <span>Work stress is real. More room for situational behavior.</span>
+        </div>
+        <div class="thresh-row">
+          <span>Professional — power over you</span>
+          <span class="thresh-val">2</span>
+          <span>Power asymmetry makes patterns more damaging. Act sooner.</span>
+        </div>
+        <div class="thresh-row">
+          <span>Finance / law / politics</span>
+          <span class="thresh-val">2</span>
+          <span>High-stakes environments where bad-faith actors cause outsized harm.</span>
+        </div>
+        <div class="thresh-row">
+          <span>Extended family</span>
+          <span class="thresh-val">4–5</span>
+          <span>Social complexity and obligations warrant more patience.</span>
+        </div>
+        <div class="thresh-row">
+          <span>Nuclear family</span>
+          <span class="thresh-val">Use judgment</span>
+          <span>The tool is one input. Professional support is another.</span>
+        </div>
+      </div>
+
+      <h2>The Reset Asymmetry</h2>
+      <p>The flag threshold (when you start counting a day as bad) is 0.55. The reset threshold (the score required to actually reset the counter) is 0.30. This 25-point gap is intentional.</p>
+      <p>Without the gap, a subject could game the system with minimal compliance — one slightly-below-threshold day every few days to prevent the streak from building. The lower reset threshold requires genuinely decent behavior to clear a flag, not just technically-not-flagging behavior.</p>
+      <p>In practice: if someone is being bad enough to score 0.54 on their "good" days, the counter doesn't reset. That's still a problem. You need to get to 0.30 — which requires actually being decent.</p>
+
+      <h2>Tuning the Score Thresholds</h2>
+      <p>Beyond consecutive days, two score thresholds are configurable:</p>
+      <ul class="feature-list">
+        <li><code>--day-threshold N</code> — the BSA score at which a day counts as "bad." Default 0.55. Lower this if you want to catch subtler patterns; raise it if you want to filter out more noise.</li>
+        <li><code>--confidence-min N</code> — the minimum confidence score to actually flag someone. Default 0.70. Raise this for fewer, higher-certainty flags. Lower it if you want to surface borderline cases for manual review.</li>
+      </ul>
+
+      <div class="feature-nav">
+        <a href="grace-period.html" class="btn-secondary">← Grace Period</a>
+        <a href="scheduling.html" class="btn-primary">Next: Scheduled Runs →</a>
+      </div>
+
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-logo">asshole-gc</div>
+      <div class="footer-links">
+        <a href="docs.html">Docs</a>
+        <a href="algorithm.html">Algorithm</a>
+        <a href="https://github.com/garrick99/asshole-gc">GitHub</a>
+      </div>
+      <div class="footer-copy">MIT License. Use responsibly.</div>
+    </div>
+  </footer>
+</body>
+</html>

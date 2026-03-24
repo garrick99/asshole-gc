@@ -1,0 +1,269 @@
+/* ─── Feature page layout ───────────────────────────────────────────── */
+.feature-page {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 0 2rem 4rem;
+}
+
+.feature-hero {
+  padding: 3.5rem 0 2.5rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 2.5rem;
+}
+
+.feature-icon-lg {
+  font-size: 2.8rem;
+  margin-bottom: 1rem;
+}
+
+.feature-hero h1 {
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.8rem;
+}
+
+.feature-lead {
+  font-size: 1.1rem;
+  color: var(--sub);
+  line-height: 1.7;
+  max-width: 580px;
+}
+.feature-lead code {
+  font-size: 0.95em;
+  color: var(--accent2);
+}
+
+/* ─── Body content ──────────────────────────────────────────────────── */
+.feature-body h2 {
+  font-size: 1.35rem;
+  font-weight: 700;
+  margin: 2.2rem 0 0.7rem;
+}
+
+.feature-body h3 {
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--sub);
+  margin: 2rem 0 0.8rem;
+}
+
+.feature-body p {
+  color: var(--sub);
+  font-size: 0.93rem;
+  line-height: 1.8;
+  margin-bottom: 1rem;
+}
+
+.feature-body p strong { color: var(--text); }
+
+.feature-body code {
+  font-size: 0.85em;
+  color: var(--accent2);
+  background: var(--bg3);
+  padding: 0.1em 0.35em;
+  border-radius: 3px;
+}
+
+.feature-list {
+  padding-left: 1.3rem;
+  margin-bottom: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.feature-list li {
+  color: var(--sub);
+  font-size: 0.92rem;
+  line-height: 1.65;
+}
+.feature-list li strong { color: var(--text); }
+.feature-list code { font-size: 0.82em; }
+
+/* ─── Dimension cards ───────────────────────────────────────────────── */
+.dim-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.dim-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1.2rem;
+  transition: border-color 0.2s;
+}
+.dim-card:hover { border-color: var(--accent); }
+
+.dim-name {
+  font-weight: 700;
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.dim-weight {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--accent2);
+  font-weight: 400;
+}
+
+.dim-card p {
+  font-size: 0.82rem;
+  margin-bottom: 0;
+  line-height: 1.6;
+}
+
+/* ─── Formula block ─────────────────────────────────────────────────── */
+.formula-block {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: 8px;
+  padding: 1.2rem 1.4rem;
+  margin: 1rem 0 1.5rem;
+}
+.formula {
+  font-family: var(--mono);
+  font-size: 0.88rem;
+  color: var(--accent2);
+  margin-bottom: 0.6rem;
+}
+.formula-note {
+  font-size: 0.8rem;
+  color: var(--sub);
+  line-height: 1.6;
+}
+
+/* ─── Confidence ranges ─────────────────────────────────────────────── */
+.range-blocks {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  margin: 1rem 0 1.5rem;
+}
+
+.range-block {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1.2rem;
+  display: grid;
+  grid-template-columns: 90px 120px 1fr;
+  gap: 0.8rem 1.2rem;
+  align-items: start;
+}
+
+.range-pct {
+  font-family: var(--mono);
+  font-size: 0.88rem;
+  font-weight: 700;
+  padding-top: 0.1rem;
+}
+.range-label {
+  font-weight: 600;
+  font-size: 0.88rem;
+  padding-top: 0.1rem;
+}
+
+.range-block p { font-size: 0.83rem; margin: 0; }
+
+.range-low    { border-left: 3px solid var(--sub); }
+.range-mid    { border-left: 3px solid #4a9eff; }
+.range-review { border-left: 3px solid var(--yellow); }
+.range-high   { border-left: 3px solid var(--red); }
+
+.range-low    .range-pct { color: var(--sub); }
+.range-mid    .range-pct { color: #4a9eff; }
+.range-review .range-pct { color: var(--yellow); }
+.range-high   .range-pct { color: var(--red); }
+
+/* ─── Three blocks (threshold philosophy) ───────────────────────────── */
+.three-blocks {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin: 1rem 0 2rem;
+}
+
+.three-block {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1.4rem;
+  text-align: center;
+}
+
+.three-num {
+  font-family: var(--mono);
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--accent2);
+  margin-bottom: 0.3rem;
+}
+.three-label {
+  font-weight: 700;
+  font-size: 0.85rem;
+  margin-bottom: 0.8rem;
+  color: var(--text);
+}
+.three-block p { font-size: 0.82rem; margin: 0; text-align: left; }
+
+/* ─── Threshold table ───────────────────────────────────────────────── */
+.threshold-table {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  margin: 1rem 0 1.5rem;
+}
+.thresh-row {
+  display: grid;
+  grid-template-columns: 1fr 120px 1fr;
+  gap: 1rem;
+  padding: 0.75rem 1.2rem;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.85rem;
+  color: var(--sub);
+}
+.thresh-row:last-child { border-bottom: none; }
+.thresh-row.header {
+  background: var(--bg3);
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--sub);
+}
+.thresh-row:not(.header):hover { background: var(--bg2); }
+.thresh-val {
+  font-family: var(--mono);
+  font-weight: 700;
+  color: var(--accent2);
+}
+
+/* ─── Navigation ────────────────────────────────────────────────────── */
+.feature-nav {
+  display: flex;
+  gap: 1rem;
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+
+/* ─── Responsive ────────────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .range-block { grid-template-columns: 1fr; gap: 0.3rem; }
+  .three-blocks { grid-template-columns: 1fr; }
+  .thresh-row { grid-template-columns: 1fr 1fr; }
+  .thresh-row span:last-child { grid-column: 1 / -1; }
+  .dim-cards { grid-template-columns: 1fr; }
+}

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grace Period — asshole-gc</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="docs.css">
+  <link rel="stylesheet" href="feature.css">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+</head>
+<body>
+  <header>
+    <nav>
+      <div class="logo"><a href="index.html" style="color:inherit;text-decoration:none"><span class="logo-cmd">asshole-gc</span></a><span class="logo-version">v1.0.0</span></div>
+      <div class="nav-links">
+        <a href="docs.html">Docs</a>
+        <a href="algorithm.html">Algorithm</a>
+        <a href="https://github.com/garrick99/asshole-gc" target="_blank">GitHub</a>
+        <a href="app.html" class="btn-nav">Run Scan</a>
+      </div>
+    </nav>
+  </header>
+
+  <div class="feature-page">
+    <div class="feature-hero">
+      <div class="feature-icon-lg">⏳</div>
+      <h1>Grace Period</h1>
+      <p class="feature-lead">People have bad days. The <code>--grace-period</code> flag issues a single warning before collection. Use it. Or don't. We don't judge.</p>
+    </div>
+
+    <div class="feature-body">
+
+      <h2>People Are Redeemable</h2>
+      <p>The core assumption behind the grace period is that most people, when clearly and honestly told that their behavior is causing harm, have the capacity to change it. Not all of them will. But the offer should be made.</p>
+      <p>It's also just fair. You've been tracking someone for days or weeks. You have a detailed picture of their behavior. They have no idea this has been happening. Before you act on information they don't know exists, giving them a chance to respond to it is the decent thing to do.</p>
+
+      <h2>What the Grace Period Is Not</h2>
+      <p>It is not another chance to explain themselves. It is not an invitation to negotiate about whether the behavior happened. It is not an opening for them to reframe your experience or make you feel responsible for their patterns.</p>
+      <p>The grace period is a notification: this behavior has been observed, it has reached a threshold, and if it continues, there will be a consequence. It's honest. It's direct. It gives them real information to act on.</p>
+
+      <h2>The 7-Day Window</h2>
+      <p>The default grace period is 7 days. During that time:</p>
+      <ul class="feature-list">
+        <li>The consecutive day counter continues running normally</li>
+        <li>Evaluations you log carry full weight</li>
+        <li>Genuine improvement — defined as BSA score below 0.30 for 3+ consecutive days — clears the flag entirely</li>
+        <li>If the pattern continues unchanged, collection executes at the end of the window</li>
+      </ul>
+      <p>Seven days is long enough to be a real opportunity and short enough to not become indefinite delay. Adjust with <code>--grace-days N</code> if your situation calls for it.</p>
+
+      <h2>Genuine Improvement vs. Performance</h2>
+      <p>The algorithm distinguishes between actually getting better and performing improvement for the duration of the grace period. The reset threshold is 0.30 — well below the 0.55 that defines a bad day. You can't slip through the grace period by merely being not-terrible. You have to be genuinely decent.</p>
+      <p>Additionally, the grace eligibility system tracks whether improvement during a grace period has preceded relapse before. A subject who improves during grace periods and then regresses has their grace eligibility suspended for 90 days on the next flag. The tool has a memory.</p>
+
+      <h2>When Not to Use It</h2>
+      <p>The grace period is optional for a reason. There are situations where issuing a warning first is the wrong call:</p>
+      <ul class="feature-list">
+        <li><strong>Safety concerns</strong> — If the behavior involves any element of harassment, intimidation, or threat, do not give advance notice. Act, and involve the appropriate people.</li>
+        <li><strong>Professional contexts</strong> — In some workplace situations, notifying someone that you're tracking their behavior creates its own problems. Use judgment and involve HR if needed.</li>
+        <li><strong>When you've already tried</strong> — If you've had the conversation before and the behavior continues, you've already given the grace period. You don't owe another one.</li>
+        <li><strong>Pattern persistence is the top signal</strong> — If the highest-scoring dimension is pattern persistence, they already know. A warning won't add information they don't have.</li>
+      </ul>
+
+      <h2>The Honest Notification</h2>
+      <p>The system won't write the notification for you — that's your voice, not ours. But what it should contain is simple: what you've observed, how long you've observed it, what you need to change, and what happens if it doesn't. No hedging. No softening that obscures the meaning. Clear and direct is kinder than vague and deniable.</p>
+      <p>Avoid starting it with "I feel like…" That's an invitation to debate your feelings instead of address your observations.</p>
+
+      <div class="feature-nav">
+        <a href="dry-run.html" class="btn-secondary">← Dry-Run Mode</a>
+        <a href="thresholds.html" class="btn-primary">Next: Configurable Thresholds →</a>
+      </div>
+
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-logo">asshole-gc</div>
+      <div class="footer-links">
+        <a href="docs.html">Docs</a>
+        <a href="algorithm.html">Algorithm</a>
+        <a href="https://github.com/garrick99/asshole-gc">GitHub</a>
+      </div>
+      <div class="footer-copy">MIT License. Use responsibly.</div>
+    </div>
+  </footer>
+</body>
+</html>
