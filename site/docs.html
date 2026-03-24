@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Documentation — asshole-gc</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="docs.css">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+</head>
+<body>
+
+  <header>
+    <nav>
+      <div class="logo"><a href="index.html" style="color:inherit;text-decoration:none"><span class="logo-cmd">asshole-gc</span></a><span class="logo-version">v1.0.0</span></div>
+      <div class="nav-links">
+        <a href="docs.html" style="color:var(--text)">Docs</a>
+        <a href="algorithm.html">Algorithm</a>
+        <a href="https://github.com/garrick99/asshole-gc" target="_blank">GitHub</a>
+        <a href="index.html#install" class="btn-nav">Install</a>
+      </div>
+    </nav>
+  </header>
+
+  <div class="docs-layout">
+    <aside class="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-label">Getting Started</div>
+        <a href="#install" class="sidebar-link active">Installation</a>
+        <a href="#quickstart" class="sidebar-link">Quick Start</a>
+        <a href="#config" class="sidebar-link">Configuration</a>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">CLI Reference</div>
+        <a href="#dry-run" class="sidebar-link"><code>--dry-run</code></a>
+        <a href="#run" class="sidebar-link"><code>--run</code></a>
+        <a href="#threshold" class="sidebar-link"><code>--threshold</code></a>
+        <a href="#grace-period" class="sidebar-link"><code>--grace-period</code></a>
+        <a href="#schedule" class="sidebar-link"><code>--schedule</code></a>
+        <a href="#status" class="sidebar-link"><code>status</code></a>
+        <a href="#clear" class="sidebar-link"><code>clear</code></a>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">Concepts</div>
+        <a href="#philosophy" class="sidebar-link">Philosophy</a>
+        <a href="#false-positives" class="sidebar-link">False Positives</a>
+        <a href="#ethics" class="sidebar-link">Ethics & Limits</a>
+      </div>
+    </aside>
+
+    <main class="docs-content">
+
+      <h1>Documentation</h1>
+      <p class="doc-lead">Complete reference for asshole-gc v1.0.0.</p>
+
+      <hr class="doc-divider">
+
+      <h2 id="install">Installation</h2>
+
+      <h3>Homebrew (macOS/Linux)</h3>
+      <div class="code-snippet">
+        <pre><code>brew install asshole-gc</code></pre>
+      </div>
+
+      <h3>Cargo</h3>
+      <div class="code-snippet">
+        <pre><code>cargo install asshole-gc</code></pre>
+      </div>
+
+      <h3>npm</h3>
+      <div class="code-snippet">
+        <pre><code>npm install -g asshole-gc</code></pre>
+      </div>
+
+      <h3>Install script</h3>
+      <div class="code-snippet">
+        <pre><code>curl -fsSL https://asshole-gc.dev/install.sh | sh</code></pre>
+      </div>
+
+      <hr class="doc-divider">
+
+      <h2 id="quickstart">Quick Start</h2>
+      <p>Three commands cover 90% of use cases:</p>
+
+      <div class="code-snippet">
+        <div class="snippet-header">1. Scan your environment (safe — no changes made)</div>
+        <pre><code>asshole-gc --dry-run</code></pre>
+      </div>
+
+      <div class="code-snippet">
+        <div class="snippet-header">2. Review results, then execute with grace period</div>
+        <pre><code>asshole-gc --run --grace-period</code></pre>
+      </div>
+
+      <div class="code-snippet">
+        <div class="snippet-header">3. Schedule weekly maintenance</div>
+        <pre><code>asshole-gc --schedule "0 9 * * 0"  # Every Sunday 9am</code></pre>
+      </div>
+
+      <hr class="doc-divider">
+
+      <h2 id="config">Configuration</h2>
+      <p>
+        Global config lives at <code>~/.config/asshole-gc/config.toml</code>.
+        Per-environment config can be placed in <code>.asshole-gc.toml</code>
+        in any directory.
+      </p>
+
+      <div class="code-snippet">
+        <div class="snippet-header">~/.config/asshole-gc/config.toml</div>
+        <pre><code>[defaults]
+threshold       = 3        # consecutive bad days before flagging
+day_threshold   = 0.55     # BSA score to count a day as "bad"
+reset_threshold = 0.30     # BSA score required to reset the counter
+window_hours    = 72       # signal rolling window
+grace_days      = 7        # grace period duration
+confidence_min  = 0.70     # minimum confidence to flag
+
+[contexts]
+# Reduce signal weight during known stress events
+deadline_factor = 0.70
+personal_factor = 0.40
+
+[output]
+color           = true
+format          = "human"  # human | json | csv</code></pre>
+      </div>
+
+      <hr class="doc-divider">
+
+      <h2 id="dry-run"><code>--dry-run</code></h2>
+      <p>
+        Scans the environment, runs the full detection pipeline, and prints
+        the candidate list with evidence — but makes no changes.
+        <strong>Always run this before <code>--run</code>.</strong>
+      </p>
+
+      <div class="code-snippet">
+        <pre><code>asshole-gc --dry-run [--format json] [--threshold N]</code></pre>
+      </div>
+
+      <p>Output columns:</p>
+      <ul class="doc-list">
+        <li><strong>Name</strong> — subject identifier</li>
+        <li><strong>Consecutive days</strong> — current streak</li>
+        <li><strong>Confidence</strong> — BSA confidence score (0–100%)</li>
+        <li><strong>Top signal</strong> — highest-weighted dimension this period</li>
+        <li><strong>Priority</strong> — HIGH / REVIEW / MONITOR</li>
+      </ul>
+
+      <hr class="doc-divider">
+
+      <h2 id="run"><code>--run</code></h2>
+      <p>
+        Executes collection on all subjects above threshold and confidence minimum.
+        Irreversible without manual reinstatement.
+        Use <code>--grace-period</code> to send a warning first.
+      </p>
+
+      <div class="code-snippet">
+        <pre><code>asshole-gc --run [--grace-period] [--target NAME]</code></pre>
+      </div>
+
+      <div class="callout warning">
+        <strong>Warning:</strong> <code>--run</code> without <code>--dry-run</code> first
+        is strongly discouraged. The false-positive rate without review is ~8%.
+        That's 1 in 12. You probably don't have 12 to spare.
+      </div>
+
+      <hr class="doc-divider">
+
+      <h2 id="threshold"><code>--threshold N</code></h2>
+      <p>
+        Sets the consecutive bad days threshold. Default: <code>3</code>.
+      </p>
+
+      <table class="doc-table">
+        <thead><tr><th>Environment</th><th>Recommended threshold</th></tr></thead>
+        <tbody>
+          <tr><td>Personal life</td><td>3 (default)</td></tr>
+          <tr><td>Professional — high stakes</td><td>2</td></tr>
+          <tr><td>Professional — long tenure</td><td>4–5</td></tr>
+          <tr><td>Family</td><td>7–10 (or never)</td></tr>
+          <tr><td>Finance / law / politics</td><td>2</td></tr>
+        </tbody>
+      </table>
+
+      <hr class="doc-divider">
+
+      <h2 id="grace-period"><code>--grace-period</code></h2>
+      <p>
+        Sends a notification to the flagged subject before executing collection.
+        The grace period is 7 days by default. During the grace period, behavior
+        is still monitored. Genuine improvement clears the flag.
+      </p>
+
+      <div class="code-snippet">
+        <pre><code>asshole-gc --run --grace-period [--grace-days N]</code></pre>
+      </div>
+
+      <p>
+        Grace period notifications are honest and direct. They do not hedge.
+        The system will not generate a notification that begins with "I feel like..."
+      </p>
+
+      <hr class="doc-divider">
+
+      <h2 id="schedule"><code>--schedule CRON</code></h2>
+      <p>
+        Installs a cron job that runs <code>asshole-gc --dry-run</code> on the specified
+        schedule and emails you the results. Requires output config (email or webhook).
+      </p>
+
+      <div class="code-snippet">
+        <pre><code># Every Sunday at 9am
+asshole-gc --schedule "0 9 * * 0"
+
+# First of every month
+asshole-gc --schedule "0 8 1 * *"</code></pre>
+      </div>
+
+      <hr class="doc-divider">
+
+      <h2 id="status"><code>status [NAME]</code></h2>
+      <p>
+        Shows current monitoring status for all tracked subjects, or a specific one.
+      </p>
+
+      <div class="code-snippet">
+        <pre><code>asshole-gc status
+asshole-gc status "Dave"</code></pre>
+      </div>
+
+      <hr class="doc-divider">
+
+      <h2 id="clear"><code>clear NAME</code></h2>
+      <p>
+        Manually clears a subject's flag and resets their counter.
+        Use when you've verified a false positive or accepted an adequate apology.
+        No judgment.
+      </p>
+
+      <div class="code-snippet">
+        <pre><code>asshole-gc clear "Casey"</code></pre>
+      </div>
+
+      <hr class="doc-divider">
+
+      <h2 id="philosophy">Philosophy</h2>
+      <blockquote style="font-size:1.1rem; border-left: 3px solid var(--accent); padding-left: 1.2rem; color: var(--sub); margin: 1.5rem 0;">
+        "Not every bug is worth fixing. Some you just remove from the codebase."
+      </blockquote>
+
+      <p>
+        asshole-gc is built on a few core beliefs:
+      </p>
+      <ul class="doc-list">
+        <li>People's time and energy are finite. Chronic toxicity is a resource drain.</li>
+        <li>Most people know who the problem is. They just needed someone to confirm it.</li>
+        <li>One bad day is noise. Three in a row is a choice.</li>
+        <li>Removal without reflection is waste. Use the dry run.</li>
+        <li>The grace period exists because people are redeemable. Use it liberally.</li>
+      </ul>
+
+      <hr class="doc-divider">
+
+      <h2 id="false-positives">False Positives</h2>
+      <p>
+        The algorithm is conservative by design. But false positives happen.
+        Common causes:
+      </p>
+      <ul class="doc-list">
+        <li>Undetected personal crisis (update context config)</li>
+        <li>You're the problem (the mirroring check helps, but isn't perfect)</li>
+        <li>Deadline artifacts (set a deadline context window)</li>
+        <li>Single-source signals (get a second opinion)</li>
+      </ul>
+      <p>
+        If a collection turns out to be a false positive, use <code>asshole-gc clear</code>
+        and consider a reinstantiation. The tool does not hold grudges on your behalf.
+        That part's up to you.
+      </p>
+
+      <hr class="doc-divider">
+
+      <h2 id="ethics">Ethics & Limits</h2>
+      <p>
+        asshole-gc is a decision-support tool, not a decision-making tool.
+        It surfaces patterns and confirms what you already feel. The decision
+        is always yours.
+      </p>
+      <p>
+        Things asshole-gc will not do:
+      </p>
+      <ul class="doc-list">
+        <li>Act without a dry-run review path</li>
+        <li>Automate collection without human confirmation</li>
+        <li>Process signals from private communications without consent</li>
+        <li>Generate a confidence score above 100% (tempting as it is)</li>
+      </ul>
+      <p>
+        The tool is not a replacement for conversation, therapy, or HR.
+        It is a replacement for the mental overhead of tracking patterns you
+        already know exist.
+      </p>
+
+    </main>
+  </div>
+
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-logo">asshole-gc</div>
+      <div class="footer-links">
+        <a href="docs.html">Docs</a>
+        <a href="algorithm.html">Algorithm</a>
+        <a href="https://github.com/garrick99/asshole-gc">GitHub</a>
+      </div>
+      <div class="footer-copy">MIT License. Use responsibly.</div>
+    </div>
+  </footer>
+
+  <script src="main.js"></script>
+</body>
+</html>

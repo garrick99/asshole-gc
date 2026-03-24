@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>asshole-gc — Garbage Collect Toxic People</title>
+  <meta name="description" content="The open-source tool for removing toxic people from your life. Finally, a gc that works on humans.">
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+</head>
+<body>
+
+  <header>
+    <nav>
+      <div class="logo"><span class="logo-cmd">asshole-gc</span><span class="logo-version">v1.0.0</span></div>
+      <div class="nav-links">
+        <a href="docs.html">Docs</a>
+        <a href="algorithm.html">Algorithm</a>
+        <a href="https://github.com/garrick99/asshole-gc" target="_blank">GitHub</a>
+        <a href="#install" class="btn-nav">Install</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+
+    <!-- Hero -->
+    <section class="hero">
+      <div class="hero-badge">v1.0.0 — now with grace-period support</div>
+      <h1>Garbage collect<br>toxic people.</h1>
+      <p class="hero-sub">
+        The world's most needed developer tool. Detects, flags, and removes
+        chronic assholes from your environment — with configurable thresholds,
+        dry-run support, and a false-positive rate lower than your last standup.
+      </p>
+      <div class="hero-actions">
+        <a href="#install" class="btn-primary">Get Started</a>
+        <a href="algorithm.html" class="btn-secondary">How It Works</a>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar">
+          <span class="dot red"></span>
+          <span class="dot yellow"></span>
+          <span class="dot green"></span>
+          <span class="terminal-title">bash</span>
+        </div>
+        <div class="terminal-body">
+          <div class="term-line"><span class="prompt">$</span> asshole-gc --dry-run</div>
+          <div class="term-line out">Scanning environment... done.</div>
+          <div class="term-line out"></div>
+          <div class="term-line out">  Candidates flagged: <span class="yellow">3</span></div>
+          <div class="term-line out"></div>
+          <div class="term-line out">  <span class="red">●</span> Dave (engineering) <span class="dim">— 7 consecutive bad days, confidence: 94%</span></div>
+          <div class="term-line out">  <span class="yellow">●</span> Karen (management) <span class="dim">— 3 consecutive bad days, confidence: 71%</span></div>
+          <div class="term-line out">  <span class="yellow">●</span> Todd (slack) <span class="dim">— 4 consecutive bad days, confidence: 83%</span></div>
+          <div class="term-line out"></div>
+          <div class="term-line out dim">  Run with --run to execute. Use --grace-period to warn first.</div>
+          <div class="term-line out"></div>
+          <div class="term-line"><span class="prompt">$</span> asshole-gc --run --grace-period</div>
+          <div class="term-line out green">✓ Grace period notices sent.</div>
+          <div class="term-line out green">✓ Collection scheduled.</div>
+          <div class="term-line out dim">  Next run: 7 days</div>
+          <div class="term-line blink"><span class="prompt">$</span> <span class="cursor">█</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Stats -->
+    <section class="stats">
+      <div class="stat">
+        <div class="stat-num">3</div>
+        <div class="stat-label">consecutive bad days<br>to flag</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">&lt;2%</div>
+        <div class="stat-label">false positive rate<br>with dry-run review</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">∞</div>
+        <div class="stat-label">relief after<br>successful collection</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">0</div>
+        <div class="stat-label">regrets reported<br>by users</div>
+      </div>
+    </section>
+
+    <!-- Features -->
+    <section class="features">
+      <h2>Everything you need to maintain a healthy environment.</h2>
+      <div class="feature-grid">
+        <div class="feature-card">
+          <div class="feature-icon">🔍</div>
+          <h3>Smart Detection</h3>
+          <p>Multi-signal behavioral analysis across 14 dimensions. Condescension, bad faith, weaponized incompetence, chronic negativity — all covered.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📊</div>
+          <h3>Confidence Scoring</h3>
+          <p>Each candidate gets a confidence score. Below 70%? Probably just a bad week. Above 90%? You already knew. We just confirmed it.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🧪</div>
+          <h3>Dry-Run Mode</h3>
+          <p>Always review before you commit. <code>--dry-run</code> shows you the candidate list with evidence. No surprises. No regrets.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">⏳</div>
+          <h3>Grace Period</h3>
+          <p>People have bad days. The <code>--grace-period</code> flag issues a single warning before collection. Use it. Or don't. We don't judge.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">⚙️</div>
+          <h3>Configurable Thresholds</h3>
+          <p>3 consecutive bad days is the default. Working in finance? Bump it to 5. Running a startup? 2 might be generous enough.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🔄</div>
+          <h3>Scheduled Runs</h3>
+          <p>Set it and forget it. Weekly gc keeps entropy low. Pair with your Sunday routine for maximum effectiveness.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Algorithm teaser -->
+    <section class="algorithm-teaser">
+      <div class="algo-text">
+        <h2>The Detection Algorithm</h2>
+        <p>
+          asshole-gc uses a multi-pass behavioral signal aggregator (BSA) to evaluate
+          subjects across 14 weighted dimensions. Signals are windowed over a rolling
+          72-hour period, normalized for context, and filtered through a false-positive
+          suppression layer trained on 10 years of "he's not that bad" excuses.
+        </p>
+        <p>
+          The consecutive-days counter resets on genuine good behavior. Gaming it
+          requires being consistently decent — which, by definition, removes the
+          subject from the candidate pool.
+        </p>
+        <a href="algorithm.html" class="btn-secondary">Read the full spec →</a>
+      </div>
+      <div class="algo-code">
+        <pre><code><span class="kw">fn</span> <span class="fn">evaluate</span>(subject: &amp;Subject) -&gt; Score {
+    <span class="kw">let</span> signals = collect_signals(subject);
+    <span class="kw">let</span> consecutive = count_consecutive_bad_days(signals);
+
+    <span class="kw">if</span> consecutive &lt; THRESHOLD {
+        <span class="kw">return</span> Score::Clear; <span class="cmt">// noise</span>
+    }
+
+    <span class="kw">let</span> confidence = bsa_score(signals)
+        .filter_false_positives()
+        .apply_context_weight();
+
+    <span class="kw">match</span> confidence {
+        c <span class="kw">if</span> c &gt; <span class="num">0.9</span> =&gt; Score::Flag(Priority::High),
+        c <span class="kw">if</span> c &gt; <span class="num">0.7</span> =&gt; Score::Flag(Priority::Review),
+        _           =&gt; Score::Monitor,
+    }
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- Install -->
+    <section class="install" id="install">
+      <h2>Get Started</h2>
+      <p class="install-sub">One command. Life-changing results.</p>
+      <div class="install-tabs">
+        <button class="tab active" onclick="showTab('brew')">Homebrew</button>
+        <button class="tab" onclick="showTab('cargo')">Cargo</button>
+        <button class="tab" onclick="showTab('npm')">npm</button>
+        <button class="tab" onclick="showTab('manual')">Manual</button>
+      </div>
+      <div class="install-blocks">
+        <div class="install-block active" id="tab-brew">
+          <div class="code-block">
+            <code>brew install asshole-gc</code>
+            <button class="copy-btn" onclick="copy(this)">copy</button>
+          </div>
+        </div>
+        <div class="install-block" id="tab-cargo">
+          <div class="code-block">
+            <code>cargo install asshole-gc</code>
+            <button class="copy-btn" onclick="copy(this)">copy</button>
+          </div>
+        </div>
+        <div class="install-block" id="tab-npm">
+          <div class="code-block">
+            <code>npm install -g asshole-gc</code>
+            <button class="copy-btn" onclick="copy(this)">copy</button>
+          </div>
+        </div>
+        <div class="install-block" id="tab-manual">
+          <div class="code-block">
+            <code>curl -fsSL https://asshole-gc.dev/install.sh | sh</code>
+            <button class="copy-btn" onclick="copy(this)">copy</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Philosophy -->
+    <section class="philosophy">
+      <blockquote>
+        "Not every bug is worth fixing.<br>Some you just remove from the codebase."
+      </blockquote>
+      <p class="phil-sub">— asshole-gc philosophy, v1.0</p>
+    </section>
+
+    <!-- Contributing -->
+    <section class="contributing">
+      <h2>Contributing</h2>
+      <p>
+        PRs welcome. Issues welcome. We do review contributor behavior before merging.<br>
+        Repeat offenders are subject to <code>asshole-gc --run</code>.
+      </p>
+      <a href="https://github.com/garrick99/asshole-gc" class="btn-primary" target="_blank">View on GitHub</a>
+    </section>
+
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-logo">asshole-gc</div>
+      <div class="footer-links">
+        <a href="docs.html">Docs</a>
+        <a href="algorithm.html">Algorithm</a>
+        <a href="https://github.com/garrick99/asshole-gc">GitHub</a>
+      </div>
+      <div class="footer-copy">MIT License. Use responsibly.<br>Not responsible for relationship fallout.</div>
+    </div>
+  </footer>
+
+  <script src="main.js"></script>
+</body>
+</html>

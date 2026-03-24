@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Detection Algorithm — asshole-gc</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="docs.css">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+</head>
+<body>
+
+  <header>
+    <nav>
+      <div class="logo"><a href="index.html" style="color:inherit;text-decoration:none"><span class="logo-cmd">asshole-gc</span></a><span class="logo-version">v1.0.0</span></div>
+      <div class="nav-links">
+        <a href="docs.html">Docs</a>
+        <a href="algorithm.html" style="color:var(--text)">Algorithm</a>
+        <a href="https://github.com/garrick99/asshole-gc" target="_blank">GitHub</a>
+        <a href="index.html#install" class="btn-nav">Install</a>
+      </div>
+    </nav>
+  </header>
+
+  <div class="docs-layout">
+    <aside class="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-label">Algorithm</div>
+        <a href="#overview" class="sidebar-link active">Overview</a>
+        <a href="#signals" class="sidebar-link">Signal Collection</a>
+        <a href="#dimensions" class="sidebar-link">14 Dimensions</a>
+        <a href="#scoring" class="sidebar-link">BSA Scoring</a>
+        <a href="#consecutive" class="sidebar-link">Consecutive Day Counter</a>
+        <a href="#fp" class="sidebar-link">False Positive Suppression</a>
+        <a href="#grace" class="sidebar-link">Grace Period Logic</a>
+        <a href="#examples" class="sidebar-link">Worked Examples</a>
+      </div>
+    </aside>
+
+    <main class="docs-content">
+
+      <h1>Detection Algorithm</h1>
+      <p class="doc-lead">
+        A technical specification of the Behavioral Signal Aggregator (BSA) powering asshole-gc.
+        Version 1.0. Last updated 2026-03-23.
+      </p>
+
+      <hr class="doc-divider">
+
+      <h2 id="overview">Overview</h2>
+      <p>
+        asshole-gc uses a multi-pass <strong>Behavioral Signal Aggregator (BSA)</strong> to evaluate
+        subjects across 14 weighted dimensions. The pipeline has four stages:
+      </p>
+      <ol class="doc-list">
+        <li><strong>Signal collection</strong> — passive observation, no active probing</li>
+        <li><strong>Dimension scoring</strong> — 14 weighted behavioral axes, rolling 72-hour window</li>
+        <li><strong>Consecutive day counting</strong> — the core threshold mechanism</li>
+        <li><strong>False positive suppression</strong> — context normalization before flagging</li>
+      </ol>
+      <p>
+        A subject is only flagged when <em>all four</em> conditions are met:
+        threshold exceeded, confidence above minimum, false-positive score below ceiling,
+        and at least one manual review pass (the <code>--dry-run</code> step).
+      </p>
+
+      <div class="callout warning">
+        <strong>Important:</strong> The algorithm is deliberately conservative. It is designed to
+        surface subjects you already know about, not to surprise you. If the output surprises you,
+        run <code>--dry-run</code> and review the evidence before proceeding.
+      </div>
+
+      <hr class="doc-divider">
+
+      <h2 id="signals">Signal Collection</h2>
+      <p>
+        Signals are collected passively across the subject's observable behavioral surface.
+        The system does not intercept private communications or require instrumentation.
+        Observable surface includes:
+      </p>
+      <ul class="doc-list">
+        <li>Communication tone and word choice in shared channels</li>
+        <li>Response patterns: frequency, latency, selectivity</li>
+        <li>Credit attribution (or lack thereof)</li>
+        <li>Reaction to criticism vs. reaction to praise</li>
+        <li>Behavior under low-stakes vs. high-stakes conditions</li>
+        <li>Treatment of people with less power than them</li>
+        <li>Follow-through on commitments</li>
+      </ul>
+
+      <p>
+        Signals are timestamped and windowed. The rolling window is 72 hours by default,
+        configurable via <code>--window</code>. Each signal has a weight, a context tag,
+        and a decay function.
+      </p>
+
+      <div class="code-snippet">
+        <div class="snippet-header">Signal structure</div>
+        <pre><code>struct Signal {
+    timestamp:   DateTime,
+    dimension:   Dimension,   // which of the 14 axes
+    weight:      f32,         // 0.0 – 1.0
+    context:     Context,     // WorkStress | Personal | Deadline | Normal
+    raw_text:    Option&lt;String&gt;,
+}</code></pre>
+      </div>
+
+      <hr class="doc-divider">
+
+      <h2 id="dimensions">14 Behavioral Dimensions</h2>
+      <p>
+        Each dimension is scored 0.0 (clean) to 1.0 (severe). Weights reflect
+        how reliably each dimension predicts chronic vs. situational behavior.
+      </p>
+
+      <table class="doc-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Dimension</th>
+            <th>Weight</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>Condescension</td>
+            <td class="weight high">0.90</td>
+            <td>Unsolicited correction, diminishing tone, "well, actually" density</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>Bad faith</td>
+            <td class="weight high">0.90</td>
+            <td>Misrepresenting positions, strawmanning, goal-post movement</td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td>Weaponized incompetence</td>
+            <td class="weight high">0.85</td>
+            <td>Strategic inability to perform tasks to avoid responsibility</td>
+          </tr>
+          <tr>
+            <td>4</td>
+            <td>Credit theft</td>
+            <td class="weight high">0.85</td>
+            <td>Claiming others' work, omitting contributors, rewriting history</td>
+          </tr>
+          <tr>
+            <td>5</td>
+            <td>Chronic negativity</td>
+            <td class="weight med">0.70</td>
+            <td>Consistent pessimism, complaint without constructive follow-through</td>
+          </tr>
+          <tr>
+            <td>6</td>
+            <td>Selective empathy</td>
+            <td class="weight med">0.75</td>
+            <td>Empathy for peers/superiors, contempt for subordinates or strangers</td>
+          </tr>
+          <tr>
+            <td>7</td>
+            <td>Commitment failure</td>
+            <td class="weight med">0.65</td>
+            <td>Repeated failure to follow through; no-show without acknowledgment</td>
+          </tr>
+          <tr>
+            <td>8</td>
+            <td>Boundary violation</td>
+            <td class="weight high">0.88</td>
+            <td>Ignoring stated limits; re-asking after clear no</td>
+          </tr>
+          <tr>
+            <td>9</td>
+            <td>DARVO pattern</td>
+            <td class="weight high">0.92</td>
+            <td>Deny, Attack, Reverse Victim and Offender when confronted</td>
+          </tr>
+          <tr>
+            <td>10</td>
+            <td>Energy drain coefficient</td>
+            <td class="weight med">0.60</td>
+            <td>Subjective exhaustion reported by proximate observers after interactions</td>
+          </tr>
+          <tr>
+            <td>11</td>
+            <td>Escalation tendency</td>
+            <td class="weight med">0.72</td>
+            <td>Disproportionate responses; minor friction → major conflict</td>
+          </tr>
+          <tr>
+            <td>12</td>
+            <td>Rules asymmetry</td>
+            <td class="weight med">0.68</td>
+            <td>Standards applied to others but not self; double standards</td>
+          </tr>
+          <tr>
+            <td>13</td>
+            <td>Apology quality</td>
+            <td class="weight med">0.65</td>
+            <td>Non-apology apologies ("sorry you feel that way"); conditional remorse</td>
+          </tr>
+          <tr>
+            <td>14</td>
+            <td>Pattern persistence</td>
+            <td class="weight high">0.95</td>
+            <td>Recurrence after acknowledged correction. The defining signal.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <hr class="doc-divider">
+
+      <h2 id="scoring">BSA Scoring</h2>
+      <p>
+        The BSA computes a weighted aggregate across all 14 dimensions,
+        normalized by the context weight of each signal. Context weights
+        reduce scores during known stress periods (deadlines, personal crises)
+        to avoid false positives from situational behavior.
+      </p>
+
+      <div class="code-snippet">
+        <div class="snippet-header">Scoring pseudocode</div>
+        <pre><code>fn bsa_score(signals: &amp;[Signal]) -&gt; f32 {
+    let windowed = signals.filter(|s| s.within_window(72.hours()));
+
+    let raw_score: f32 = windowed
+        .group_by(|s| s.dimension)
+        .map(|(dim, sigs)| {
+            let dim_score = sigs.iter()
+                .map(|s| s.weight * context_factor(s.context))
+                .sum::&lt;f32&gt;()
+                .min(1.0);
+            dim_score * dim.weight
+        })
+        .sum();
+
+    // Normalize to [0, 1]
+    raw_score / DIMENSION_WEIGHT_SUM
+}</code></pre>
+      </div>
+
+      <p>
+        Context factors:
+      </p>
+      <table class="doc-table">
+        <thead><tr><th>Context</th><th>Factor</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td>Normal</td><td class="weight high">1.00</td><td>Full weight</td></tr>
+          <tr><td>Work deadline</td><td class="weight med">0.70</td><td>Reduced — stress artifacts</td></tr>
+          <tr><td>Personal crisis</td><td class="weight low">0.40</td><td>Significantly reduced</td></tr>
+          <tr><td>Bereavement</td><td class="weight low">0.10</td><td>Almost excluded</td></tr>
+        </tbody>
+      </table>
+
+      <hr class="doc-divider">
+
+      <h2 id="consecutive">Consecutive Day Counter</h2>
+      <p>
+        The consecutive day counter is the core threshold mechanism. A "bad day" is
+        defined as any 24-hour period in which the subject's BSA score exceeds
+        <code>0.55</code> (configurable via <code>--day-threshold</code>).
+      </p>
+      <p>
+        The counter increments on bad days and <strong>resets on genuinely good days</strong>.
+        A good day requires a score below <code>0.30</code> — not just
+        below threshold. This prevents gaming via minimal compliance.
+      </p>
+
+      <div class="callout info">
+        <strong>Design note:</strong> The reset threshold asymmetry (flag at 0.55, reset at 0.30)
+        is intentional. It prevents the "one good day buys a week of bad behavior" pattern.
+        To reset the counter, you have to actually be decent, not merely below-flagging.
+      </div>
+
+      <p>
+        Default threshold: <strong>3 consecutive bad days</strong>. This was chosen because:
+      </p>
+      <ul class="doc-list">
+        <li>1 bad day — noise. Everyone has them.</li>
+        <li>2 bad days — pattern forming. Worth noting.</li>
+        <li>3 bad days — this is who they are right now. Time to act.</li>
+      </ul>
+
+      <hr class="doc-divider">
+
+      <h2 id="fp">False Positive Suppression</h2>
+      <p>
+        The FP suppression layer runs after BSA scoring and before flagging.
+        It applies three filters:
+      </p>
+      <ol class="doc-list">
+        <li>
+          <strong>Observer bias correction</strong> — if the observer reporting signals
+          has a known conflict with the subject, dimension weights are reduced by 20%.
+        </li>
+        <li>
+          <strong>Mirroring check</strong> — if the subject's flagged behaviors closely
+          mirror behaviors exhibited by the reporting observer, confidence is reduced.
+          Some people bring out the worst in each other.
+        </li>
+        <li>
+          <strong>Single-source guard</strong> — signals from only one observer require
+          a higher threshold (4 consecutive days instead of 3) before flagging.
+        </li>
+      </ol>
+
+      <p>
+        The FP rate with <code>--dry-run</code> review is estimated at &lt;2%.
+        Without review, it is estimated at ~8%. Always use <code>--dry-run</code>.
+      </p>
+
+      <hr class="doc-divider">
+
+      <h2 id="grace">Grace Period Logic</h2>
+      <p>
+        When <code>--grace-period</code> is passed, the subject receives a single
+        clear notification before collection is executed. The grace period is 7 days
+        by default (<code>--grace-days N</code>).
+      </p>
+      <p>
+        During the grace period, the counter continues running. If the subject
+        demonstrates genuine improvement (score drops below reset threshold for
+        3+ consecutive days), the flag is cleared and they are moved to
+        <code>Status::Monitoring</code> instead.
+      </p>
+
+      <div class="callout warning">
+        <strong>Warning:</strong> Grace periods can be gamed. The system tracks
+        behavior during the grace period separately. A subject who improves
+        <em>only</em> during the grace period and regresses afterward will have
+        their grace eligibility revoked for 90 days.
+      </div>
+
+      <hr class="doc-divider">
+
+      <h2 id="examples">Worked Examples</h2>
+
+      <h3>Example A: Dave (Engineering)</h3>
+      <div class="example-block">
+        <div class="example-meta">7 consecutive bad days · confidence 94% · Priority: HIGH</div>
+        <table class="doc-table">
+          <thead><tr><th>Dimension</th><th>Score</th><th>Key signals</th></tr></thead>
+          <tbody>
+            <tr><td>Condescension</td><td class="weight high">0.91</td><td>23 unsolicited corrections in 7 days</td></tr>
+            <tr><td>DARVO pattern</td><td class="weight high">0.88</td><td>3 incidents of reverting blame on confrontation</td></tr>
+            <tr><td>Pattern persistence</td><td class="weight high">0.95</td><td>Same behaviors for 14+ months</td></tr>
+            <tr><td>Credit theft</td><td class="weight med">0.72</td><td>2 documented omissions in shared presentations</td></tr>
+          </tbody>
+        </table>
+        <p class="example-verdict">Verdict: Flag. No false positive indicators. Grace period optional.</p>
+      </div>
+
+      <h3>Example B: Casey (Slack)</h3>
+      <div class="example-block">
+        <div class="example-meta">3 consecutive bad days · confidence 41% · Status: MONITOR</div>
+        <table class="doc-table">
+          <thead><tr><th>Dimension</th><th>Score</th><th>Key signals</th></tr></thead>
+          <tbody>
+            <tr><td>Chronic negativity</td><td class="weight med">0.68</td><td>High complaint volume this week</td></tr>
+            <tr><td>Escalation tendency</td><td class="weight low">0.42</td><td>One overreaction in a tense meeting</td></tr>
+          </tbody>
+        </table>
+        <p class="example-verdict">Verdict: Monitor. Context: product launch week. Score likely situational. Check in 7 days.</p>
+      </div>
+
+    </main>
+  </div>
+
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-logo">asshole-gc</div>
+      <div class="footer-links">
+        <a href="docs.html">Docs</a>
+        <a href="algorithm.html">Algorithm</a>
+        <a href="https://github.com/garrick99/asshole-gc">GitHub</a>
+      </div>
+      <div class="footer-copy">MIT License. Use responsibly.</div>
+    </div>
+  </footer>
+
+  <script src="main.js"></script>
+</body>
+</html>
