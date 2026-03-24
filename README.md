@@ -43,7 +43,7 @@ cargo install asshole-gc
 # or
 npm install -g asshole-gc
 # or
-curl -fsSL https://asshole-gc.dev/install.sh | sh
+curl -fsSL # coming soon | sh
 ```
 
 ## CLI Reference
@@ -80,7 +80,7 @@ The Behavioral Signal Aggregator (BSA) scores subjects across:
 | 13 | Apology quality | 0.65 |
 | 14 | Pattern persistence | 0.95 |
 
-See [algorithm.html](https://asshole-gc.dev/algorithm.html) for the full spec.
+See [algorithm.html](algorithm.html) for the full spec.
 
 ## Configuration
 
