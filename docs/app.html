@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>asshole-gc — Run Scan</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="app.css">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+</head>
+<body>
+
+  <header>
+    <nav>
+      <div class="logo"><a href="index.html" style="color:inherit;text-decoration:none"><span class="logo-cmd">asshole-gc</span></a><span class="logo-version">v1.0.0</span></div>
+      <div class="nav-links">
+        <a href="docs.html">Docs</a>
+        <a href="algorithm.html">Algorithm</a>
+        <a href="index.html#install">GitHub</a>
+        <a href="app.html" class="btn-nav">Run Scan</a>
+      </div>
+    </nav>
+  </header>
+
+  <div class="app-shell">
+
+    <!-- ── DASHBOARD ─────────────────────────────────────────── -->
+    <div id="view-dashboard" class="view active">
+      <div class="app-header">
+        <div>
+          <h1 class="app-title">asshole-gc <span class="app-title-cmd">--dry-run</span></h1>
+          <p class="app-sub">Add subjects, log evaluations, get verdicts. All data stays in your browser.</p>
+        </div>
+        <button class="btn-primary" onclick="App.showAddSubject()">+ Add Subject</button>
+      </div>
+
+      <div id="subject-list-empty" class="empty-state">
+        <div class="empty-icon">🔍</div>
+        <h3>No subjects tracked yet.</h3>
+        <p>Add someone to begin monitoring.</p>
+        <button class="btn-primary" onclick="App.showAddSubject()">Add First Subject</button>
+      </div>
+
+      <div id="subject-list" class="subject-list" style="display:none"></div>
+
+      <div id="results-panel" class="results-panel" style="display:none">
+        <div class="results-header">
+          <span class="results-title">Scan Results</span>
+          <button class="run-btn" id="run-btn" onclick="App.executeRun()">
+            <span class="run-btn-inner">asshole-gc --run</span>
+          </button>
+        </div>
+        <div id="results-terminal" class="results-terminal"></div>
+      </div>
+    </div>
+
+    <!-- ── ADD SUBJECT ───────────────────────────────────────── -->
+    <div id="view-add-subject" class="view">
+      <div class="form-header">
+        <button class="back-btn" onclick="App.showDashboard()">← Back</button>
+        <h2>Add Subject</h2>
+      </div>
+      <div class="form-card">
+        <label class="form-label">Name or identifier</label>
+        <input id="subject-name-input" class="form-input" type="text"
+               placeholder="e.g. Dave (Engineering)"
+               onkeydown="if(event.key==='Enter') App.addSubject()">
+        <p class="form-hint">This stays in your browser. Use whatever you'd recognise.</p>
+        <button class="btn-primary" onclick="App.addSubject()">Add & Evaluate →</button>
+      </div>
+    </div>
+
+    <!-- ── EVALUATE ──────────────────────────────────────────── -->
+    <div id="view-evaluate" class="view">
+      <div class="form-header">
+        <button class="back-btn" onclick="App.showDashboard()">← Back</button>
+        <h2>Evaluate: <span id="eval-subject-name"></span></h2>
+        <span class="eval-day-label">Day <span id="eval-day-num"></span></span>
+      </div>
+
+      <div class="eval-context-bar">
+        <span class="ctx-label">Context (reduces signal weight):</span>
+        <label class="ctx-option"><input type="checkbox" id="ctx-deadline"> Deadline week</label>
+        <label class="ctx-option"><input type="checkbox" id="ctx-personal"> Personal crisis</label>
+        <label class="ctx-option"><input type="checkbox" id="ctx-bereavement"> Bereavement</label>
+      </div>
+
+      <form id="eval-form" class="eval-form">
+        <!-- Questions injected by JS -->
+      </form>
+
+      <div class="eval-actions">
+        <button class="btn-secondary" onclick="App.showDashboard()">Cancel</button>
+        <button class="btn-primary" onclick="App.submitEvaluation()">Log This Day →</button>
+      </div>
+    </div>
+
+    <!-- ── SUBJECT DETAIL ────────────────────────────────────── -->
+    <div id="view-detail" class="view">
+      <div class="form-header">
+        <button class="back-btn" onclick="App.showDashboard()">← Back</button>
+        <h2 id="detail-name"></h2>
+        <div id="detail-badge" class="verdict-badge"></div>
+      </div>
+      <div id="detail-body"></div>
+    </div>
+
+  </div>
+
+  <!-- ── RUN MODAL ─────────────────────────────────────────── -->
+  <div id="run-modal" class="modal-overlay" style="display:none" onclick="if(event.target===this)App.closeModal()">
+    <div class="modal">
+      <div class="modal-terminal">
+        <div class="terminal-bar">
+          <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+          <span class="terminal-title">asshole-gc --run --grace-period</span>
+        </div>
+        <div id="modal-output" class="terminal-body modal-body"></div>
+      </div>
+      <button class="btn-primary modal-close" onclick="App.closeModal()">Done</button>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
